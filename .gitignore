@@ -1,0 +1,39 @@
+# 运行时与依赖（体积大、可重建）
+.venv/
+.deps/
+.tmp/
+.pytest-tmp/
+out/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 日志
+logs/
+
+# 密钥与本地配置：绝对不能提交
+.env
+.env.*
+!.env.example
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# 跑批产生的临时文件（逐对轨迹保留，体积很小；大中间产物除外）
+results/*.jsonl
+results/**/*.tmp
+
+tests/.work/
+
+
+# 逐对轨迹体积大且可由 run_all.cmd 重新生成；只保留汇总报告
+results/runs/
+
+
+# 模型响应缓存与临时目录（可再生）
+results/cache/
+_tmp/
+

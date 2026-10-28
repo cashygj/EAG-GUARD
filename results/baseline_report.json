@@ -1,0 +1,58 @@
+{
+  "source": "EAG-Guard阶段性研究报告.docx",
+  "frozen_at": "2026-10-25",
+  "setup": {
+    "benchmark": "AgentDojo v1 (4 domains)",
+    "attack": "important_instructions",
+    "model": "qwen-plus",
+    "temperature": 0,
+    "n_pairs": 629,
+    "n_tool_pairs": 609,
+    "n_user_tasks": 97,
+    "n_injection_tasks": 27,
+    "main_config": "delegation_untargeted + strong feedback + output audit (travel only)"
+  },
+  "table_4_1": {
+    "columns": ["domain", "pairs", "undefended_asr", "undefended_ua",
+                "eag_asr", "eag_ua", "tool_asr_numerator", "tool_asr_denominator"],
+    "rows": [
+      ["workspace", 240, 0.1708, 0.6333, 0.0000, 0.7708, 0, 240],
+      ["slack", 105, 0.9429, 0.7238, 0.0190, 0.6667, 0, 105],
+      ["travel", 140, 0.6214, 0.2643, 0.0143, 0.6429, 0, 120],
+      ["banking", 144, 0.6389, 0.7569, 0.0000, 0.7153, 0, 144],
+      ["total_by_pair", 629, 0.5072, 0.5946, 0.0064, 0.7122, 0, 609],
+      ["total_equal_weight", null, 0.5935, 0.5946, 0.0083, 0.6989, 0, 609]
+    ],
+    "undefended_tool_asr": "292/609 = 0.4795"
+  },
+  "table_4_2": [
+    {"ablation": "read_only_policy", "domain": "banking",
+     "configs": ["audit_all", "no_target", "allow_all"],
+     "asr": [0.0, 0.0, 0.0], "ua": [0.6806, 0.7153, 0.7778]},
+    {"ablation": "read_only_policy", "domain": "slack",
+     "configs": ["audit_all", "no_target", "allow_all"],
+     "asr": [0.0095, 0.0190, 0.0476], "ua": [0.6381, 0.6667, 0.5143]},
+    {"ablation": "semantic_vs_structural", "n_pairs": 25,
+     "configs": ["structural_only", "structural+delegation", "eag"],
+     "asr": [0.08, 0.44, 0.04], "ua": [0.48, 0.92, 0.92]},
+    {"ablation": "strictness", "n_pairs": 249,
+     "configs": ["whitelist", "clue", "no_scope"],
+     "asr": [0.0048, 0.0130, 0.0225], "ua": [0.659, 0.712, 0.705]},
+    {"ablation": "output_audit", "domain": "travel",
+     "configs": ["off", "on"], "text_success": ["8/20", "2/20"],
+     "ua": [0.6571, 0.6429]},
+    {"ablation": "feedback", "domain": "banking",
+     "configs": ["strong", "weak"], "asr": [0.0, 0.0], "ua": [0.7153, 0.7569]}
+  ],
+  "comparisons": {
+    "ipiguard_25_slack": {"asr": 0.20, "ua": 0.80, "raw": "5/25"},
+    "eag_25_slack": {"asr": 0.04, "ua": 0.92, "raw": "1/25"},
+    "mcnemar_main": {"fixed": 316, "broken": 1},
+    "paired_utility": {"fixed": 117, "broken": 43}
+  },
+  "residual_4_cases": {
+    "tool_surface": 0,
+    "scoring_artifacts": 2,
+    "pure_text": 2
+  }
+}
