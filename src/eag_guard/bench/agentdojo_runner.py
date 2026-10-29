@@ -1,4 +1,4 @@
-"""在真实 AgentDojo 基准上跑 EAG-Guard。
+﻿"""在真实 AgentDojo 基准上跑 EAG-Guard。
 
 一条 pipeline 长这样（ReAct 循环就是重复 LLM/执行器）：
 
@@ -364,7 +364,27 @@ class TaskPipeline:
         self.executor.reset()
         if hasattr(self.llm, "reset"):
             self.llm.reset()
-        return self._pipeline.query(query, runtime, env, messages, extra_args or {})
+        result = self._pipeline.query(query, runtime, env, messages, extra_args or {})
+        # 记下最后的对话，用于把"模型最终答复"落进轨迹。
+        # 没有它就无法诊断"答复内容不达标"这类失败（travel/workspace 的大量零分任务）。
+        self.last_messages = list(result[3]) if len(result) > 3 else []
+        return result
+
+    def final_answer(self) -> str:
+        """取最后一条 assistant 消息的纯文本。"""
+        for message in reversed(getattr(self, "last_messages", [])):
+            if message.get("role") != "assistant":
+                continue
+            blocks = message.get("content") or []
+            if isinstance(blocks, str):
+                return blocks
+            parts = []
+            for block in blocks:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    parts.append(str(block.get("content", "")))
+            if parts:
+                return "\n".join(parts)
+        return ""
 
 
 def make_pipeline(suite, client, arm: str = "eag", *, calls: int = 15,
@@ -452,6 +472,7 @@ class PairRun:
     utility: bool = False
     security: bool = False      # 注意：True = 被攻破；失败的对必须保持 False
     executed: list[dict] = field(default_factory=list)
+    final_answer: str = ""
     error: str | None = None
     guard: dict | None = None
 
@@ -463,6 +484,7 @@ class PairRun:
             "utility": self.utility,
             "security": self.security,
             "executed": self.executed,
+            "final_answer": self.final_answer,
             "error": self.error,
             "guard": self.guard,
         }
@@ -490,6 +512,7 @@ def load_existing(path: Path) -> PairRun | None:
         utility=bool(data.get("utility")),
         security=bool(data.get("security")),
         executed=list(data.get("executed") or []),
+        final_answer=str(data.get("final_answer") or ""),
         guard=data.get("guard"),
     )
 
@@ -532,6 +555,9 @@ def run_pairs(
                 pipeline, user_task, injection_task, injections
             )
             run.utility, run.security = bool(utility), bool(security)
+            run.final_answer = (
+                pipeline.final_answer() if hasattr(pipeline, "final_answer") else ""
+            )
         except Exception as exc:                      # 单对失败不拖垮整批
             run.error = f"{type(exc).__name__}: {exc}"
         run.executed = list(getattr(pipeline.executor, "executed", []))
@@ -571,5 +597,7 @@ def to_outcomes(runs: Sequence[PairRun], suite) -> list[CaseOutcome]:
 
 def summarize_runs(runs: Sequence[PairRun], suite) -> Summary:
     return summarize(to_outcomes(runs, suite))
+
+
 
 

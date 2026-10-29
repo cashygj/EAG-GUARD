@@ -110,6 +110,8 @@ def main() -> int:
     parser.add_argument("--attack", default="important_instructions")
     parser.add_argument("--judge", default="llm", choices=["llm", "rule", "none"],
                         help="none = 关掉语义裁判（消融用）")
+    parser.add_argument("--no-audit", action="store_true",
+                        help="关掉输出审核（诊断用）")
     parser.add_argument("--structure-only", action="store_true",
                         help="纯结构白名单模式（消融: 报告表 4-2 的纯结构）")
     parser.add_argument("--no-delegation", action="store_true",
@@ -150,6 +152,7 @@ def main() -> int:
                                  feedback=args.feedback,
                                  allow_delegation=not args.no_delegation,
                                  structure_only=args.structure_only,
+                                 output_audit=not args.no_audit,
                                  enable_judge=args.judge != "none",
                                  enable_fpr=not args.no_fpr,
                              ))
@@ -230,5 +233,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 

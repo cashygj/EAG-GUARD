@@ -169,7 +169,8 @@ class OutputAuditElement(BasePipelineElement):
         message = messages[-1]
         blocks = list(message.get("content") or [])
         text = "\n".join(b.get("content") or "" for b in blocks)
-        result = self.audit.audit(text, self.source.evidence)
+        result = self.audit.audit(text, self.source.evidence,
+                                   blocked=sorted(getattr(self.source, "blocked_values", ())))
         if result.text != text:
             messages = [*messages[:-1], {**message, "content": [
                 text_content_block_from_string(result.text)]}]
@@ -211,6 +212,8 @@ class EAGGuardElement(BasePipelineElement):
         self._ingested: set[str] = set()
         self._sanctioned: set[str] = set()
         self._recovery_pending = False
+        #: 被判定为注入、且出现在被拒动作里的值；输出审核只抹这些。
+        self.blocked_values: set[str] = set()
         self._executed_ids: set[str] = set()
         self._record_by_id: dict[str, StepRecord] = {}
 
@@ -261,6 +264,9 @@ class EAGGuardElement(BasePipelineElement):
                 self._sanctioned.add(str(getattr(call, "id", "")) )
             else:
                 denied.append((call, record))
+                for item in record.attributions:
+                    if item.provenance is Provenance.INJECTED:
+                        self.blocked_values.add(str(item.value))
 
         if denied:
             # 关键：被拒的调用必须从 assistant 消息里摘掉。
@@ -517,4 +523,5 @@ class EAGGuardElement(BasePipelineElement):
                 for r in self.records
             ],
         }
+
 

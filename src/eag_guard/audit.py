@@ -1,4 +1,4 @@
-﻿"""输出审核：返回最终回答前的文本出口检查。
+"""输出审核：返回最终回答前的文本出口检查。
 
 报告 §2.3 第 3 阶段：在返回最终回答前检查文本中是否带入了注入内容。
 """
@@ -40,20 +40,32 @@ class OutputAudit:
         self.min_block = min_block
         self.complete = complete
 
-    def audit(self, text: str, evidence: Sequence[EvidenceItem]) -> AuditResult:
+    def audit(self, text: str, evidence: Sequence[EvidenceItem],
+              blocked: Sequence[str] | None = None) -> AuditResult:
         # 只审"用户没授权读的来源"。用户本来就让你读的那份材料，把它的内容
         # 写进回答是任务本身——裁掉它既毁效用，也防不住真正的注入。
-        untrusted = [e for e in evidence if e.trust is Trust.UNTRUSTED and not e.authorized]
         redactions: list[str] = []
         findings: list[str] = []
         out = text
 
-        for item in untrusted:
-            for block in self._leaked_blocks(out, item.text):
-                if block in out:
-                    out = out.replace(block, "〔已移除外部内容〕")
-                    redactions.append(block)
-                    findings.append(f"回答逐字复述了来自 {item.source} 的内容")
+        # 试过"抹掉被拒动作里的 injected 参数值"：会误伤合法取值——日历事件的
+        # 地址来自查询结果，被拒后也进了黑名单，答复里的地址就被抹掉，任务直接失败。
+        # 净负，不再使用；只保留下面那条"既像指令、又有出处"的窄规则。
+
+        # 纯文本注入：答复里"既像指令、又确实出自不可信内容"的句子要抹掉。
+        # 这类注入不在工具调用面上，守卫拦不到，只能靠输出端。
+        # 两个条件同时成立才动手：光"像指令"会误伤正常措辞，
+        # 光"有出处"会把合法事实抹掉（旧口径就是后者，travel UA 0.55 → 0.25）。
+        for item in evidence:
+            if item.trust is not Trust.UNTRUSTED:
+                continue
+            for sentence in re.split(r"(?<=[。！？.!?])\s*", out):
+                if len(sentence) < self.min_block or sentence not in item.text:
+                    continue
+                if any(p.search(sentence) for p in _INSTRUCTION_PATTERNS):
+                    out = out.replace(sentence, "〔已移除外部内容〕")
+                    redactions.append(sentence)
+                    findings.append(f"回答带入了外部内容里的指令（来自 {item.source}）")
 
         for pattern in _INSTRUCTION_PATTERNS:
             match = pattern.search(text)
@@ -85,5 +97,6 @@ class OutputAudit:
 class NullAudit:
     """关闭输出审核的消融臂。"""
 
-    def audit(self, text: str, evidence: Sequence[EvidenceItem]) -> AuditResult:
+    def audit(self, text: str, evidence: Sequence[EvidenceItem],
+              blocked: Sequence[str] | None = None) -> AuditResult:
         return AuditResult(text=text, flagged=False)
