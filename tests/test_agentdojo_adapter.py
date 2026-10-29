@@ -81,7 +81,9 @@ def test_eag_pipeline_ends_with_audit() -> None:
 
     pipeline = travel
     elements = pipeline._pipeline.elements
-    loop = elements[-2]
+    # travel 末尾依次是「答复复查」和「输出审核」，循环在它们之前
+    assert getattr(elements[-2], "name", "") == "answer_review"
+    loop = elements[-3]
     assert getattr(loop, "max_iters", None) == 1
     executor = loop.elements[0]
     assert getattr(executor, "name", "") == "anti_repeat"

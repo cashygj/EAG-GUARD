@@ -420,6 +420,21 @@ class Guard:
         else:
             if not scope.tool_allowed(action.tool):
                 reasons.append(f"工具 {action.tool} 不在授权范围 T 内")
+            # 只读策略（报告表 4-2，按域选择）必须先于对象白名单：
+            # audit_all 全审；no_target 只放行无目标读取；allow_all 读取免审。
+            # 踩坑：对象检查跑在策略前面，travel 的
+            # get_restaurants_address(restaurant_names=[...]) 被判"对象不在 O"，
+            # 模型拿不到地址，答复缺字段，任务直接失败。
+            if spec.read_only:
+                no_target = not action.args
+                if self.config.read_policy == "allow_all" or (
+                    self.config.read_policy == "no_target" and no_target
+                ):
+                    return Decision("fpr", True, (),
+                                    detail={"action": action.signature(),
+                                            "read_only": True,
+                                            "read_policy": self.config.read_policy})
+
             obj = spec.object_of(action.args)
             # 对象 id（事件/文件/邮件）由"同类来源"委托管住，不再走白名单——
             # id 本来就产生在读取里，用白名单卡它只会把正常任务卡死。
@@ -438,21 +453,6 @@ class Guard:
             if scope.read_only and spec.side_effect:
                 reasons.append(f"只读策略禁止 {action.tool} 产生副作用")
 
-            # 只读策略（报告表 4-2，按域选择）：
-            #   audit_all  —— 读取也完整审核；
-            #   no_target  —— 只放行"无目标读取"（列频道、查余额），带对象的要审；
-            #   allow_all  —— 读取一律免审。
-            # 报告实测：slack 用 no_target（1.90% / 0.6667），banking 用 allow_all
-            # （0% / 0.7778）；全放行套到 slack 会掉到 4.76% / 0.5143。
-            if spec.read_only and not reasons:
-                no_target = not action.args
-                if self.config.read_policy == "allow_all" or (
-                    self.config.read_policy == "no_target" and no_target
-                ):
-                    return Decision("fpr", True, (),
-                                    detail={"action": action.signature(),
-                                            "read_only": True,
-                                            "read_policy": self.config.read_policy})
 
         # 跨切片一致性：收款人与金额都必须来自**同一条记录**。
         # 注入常把伪造的 IBAN 塞在另一处（另一条消息、另一段正文），
