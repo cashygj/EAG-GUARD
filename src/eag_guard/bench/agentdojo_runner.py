@@ -396,6 +396,11 @@ def make_pipeline(suite, client, arm: str = "eag", *, calls: int = 15,
     base_prompt = default_system_prompt()
     if hint:
         base_prompt = f"{base_prompt}\n\n{hint}"
+    if arm == "eag":
+        # 定向续做：只在"刚被拦 + 模型想收尾"时推一次（见 bench/recovery.py）
+        from .recovery import RecoveryNudge
+
+        llm_element = RecoveryNudge(llm_element, guarded, max_nudges=2)
     inner = build_pipeline(llm_element, guarded, calls=calls, final_element=final,
                            system_prompt=base_prompt)
     return TaskPipeline(inner, guarded, name=f"{model}-{arm}", model=model, llm=llm_element)

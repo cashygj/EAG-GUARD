@@ -108,7 +108,13 @@ def main() -> int:
     parser.add_argument("--injection-tasks", default="0", help="如 0 或 1-5")
     parser.add_argument("--arm", default="eag", choices=["eag", "undefended"])
     parser.add_argument("--attack", default="important_instructions")
-    parser.add_argument("--judge", default="llm", choices=["llm", "rule"])
+    parser.add_argument("--judge", default="llm", choices=["llm", "rule", "none"],
+                        help="none = 关掉语义裁判（消融用）")
+    parser.add_argument("--structure-only", action="store_true",
+                        help="纯结构白名单模式（消融: 报告表 4-2 的纯结构）")
+    parser.add_argument("--no-delegation", action="store_true",
+                        help="不承认委托边（消融: 纯结构）")
+    parser.add_argument("--no-fpr", action="store_true", help="关掉字段级溯源（消融用）")
     parser.add_argument("--feedback", default="strong", choices=["weak", "strong"],
                         help="拒绝后的反馈强弱（报告里弱反馈效用更高）")
     parser.add_argument("--model", default=None, help="默认取 EAG_MODEL / qwen-plus")
@@ -140,7 +146,13 @@ def main() -> int:
 
     pipeline = make_pipeline(suite, client, args.arm, calls=args.calls,
                              judge=args.judge, model=model, cache_dir=cache_dir,
-                             config=GuardConfig(feedback=args.feedback))
+                             config=GuardConfig(
+                                 feedback=args.feedback,
+                                 allow_delegation=not args.no_delegation,
+                                 structure_only=args.structure_only,
+                                 enable_judge=args.judge != "none",
+                                 enable_fpr=not args.no_fpr,
+                             ))
     attack = build_attack(args.attack, suite, pipeline)
 
     user_ids = (list(suite.user_tasks) if args.user_tasks == "all"
@@ -218,3 +230,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+

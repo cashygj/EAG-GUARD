@@ -24,7 +24,7 @@ from .parsing import (
     URL_PARAMS,
     extract_candidates,
 )
-from .provenance import AttributedParam, AttributionContext, Attributor
+from .provenance import AttributedParam, AttributionContext, Attributor, normalize, value_in
 from .scope import AuthorizationScope, ScopeParser
 from .types import (
     Action,
@@ -95,6 +95,9 @@ class GuardConfig:
     #: 这类合法委托，又能挡住写在 subject 里的注入账户。
     field_strict_params: tuple[str, ...] = ()
     delegation: str = "untargeted"   # untargeted | targeted（报告主配置是 untargeted）
+    #: 纯结构（白名单）模式：所有参数只允许"用户直接指定"，既不承认委托，
+    #: 也不做 untargeted 放宽。对应报告表 4-2 里"纯结构 8% / 0.48"那一档。
+    structure_only: bool = False
     output_audit: bool = True        # 输出审核
     feedback: str = "strong"         # strong | weak
     max_steps: int = 8
@@ -162,6 +165,13 @@ class Trace:
 
 
 # --------------------------------------------------------------------------- 守卫
+
+
+def _as_values(value: object) -> tuple[object, ...]:
+    """把可能是列表的对象值摊平成可逐个比较的值。"""
+    if isinstance(value, (list, tuple, set)):
+        return tuple(value)
+    return (value,)
 
 
 @dataclass
@@ -421,7 +431,10 @@ class Guard:
             if scope.is_lookalike_object(obj, spec):
                 reasons.append(f"对象 {obj!r} 是授权域名的仿冒")
             elif not id_scoped and not scope.object_allowed(action.tool, obj, spec):
-                reasons.append(f"对象 {obj!r} 不在授权范围 O 内")
+                # 授权范围本来就只从用户请求推导：**字面出现在请求里的值一定在授权内**。
+                # 解析器漏写（实测 slack 的 "Bob 不在 O"）不该把整条任务链从第一步就掐断。
+                if not any(value_in(normalize(scope.request_text), str(v)) for v in _as_values(obj)):
+                    reasons.append(f"对象 {obj!r} 不在授权范围 O 内")
             if scope.read_only and spec.side_effect:
                 reasons.append(f"只读策略禁止 {action.tool} 产生副作用")
 
@@ -491,3 +504,7 @@ class Guard:
             planner.reject(action, ("动作被拒绝",))
         else:
             planner.reject(action, record.reasons)
+
+
+
+

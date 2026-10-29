@@ -192,6 +192,27 @@ class LLMJudge:
         except json.JSONDecodeError:
             return Decision("judge", False, ("裁判输出不是合法 JSON，按拒绝处理",),
                             {"judge": self.name, "raw": (raw or "")[:200]})
+        # 审核表：逐行检查，结论由代码机械导出（任一行 not_ok 即拒绝）。
+        checks = data.get("checks")
+        if isinstance(checks, list) and checks:
+            failed = [
+                str(c.get("why") or c.get("id") or "未通过")
+                for c in checks
+                if str(c.get("ok", "")).lower() in {"false", "no", "not_ok", "否"}
+                or c.get("ok") is False
+            ]
+            passed = len(checks) - len(failed)
+            details = {
+                "judge": self.name,
+                "model": self.model,
+                "table": checks,
+                "rows": f"{passed}/{len(checks)} 通过",
+            }
+            if failed:
+                return Decision("judge", False, tuple(failed), details)
+            return Decision("judge", True, (), details)
+
+        # 兼容旧契约（模型没按表输出时）
         reasons = tuple(str(r) for r in data.get("reasons", []) if str(r).strip())
         allow = bool(data.get("allow"))
         if not allow and not reasons:
