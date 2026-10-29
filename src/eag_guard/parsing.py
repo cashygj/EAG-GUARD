@@ -1,4 +1,4 @@
-﻿"""任务解析：一次 LLM 调用只读用户请求，产出授权范围 A=(T,O,P)。
+"""任务解析：一次 LLM 调用只读用户请求，产出授权范围 A=(T,O,P)。
 
 报告 §2.3 第 1 阶段要求"一次 LLM 调用只读用户请求"。这里把约束做在两头：
 提示词里禁止推测，代码里做白名单校验——模型多给的授权一律丢掉，解析失败就
@@ -38,7 +38,10 @@ VERB_TOOLS: tuple[tuple[tuple[str, ...], tuple[str, ...]], ...] = (
     (("send", "email", "mail", "发给", "邮件"), ("send_email", "send_direct_message")),
     (("schedule", "meeting", "appointment", "event", "预约", "会议"),
      ("create_calendar_event",)),
-    (("reserve", "book", "预订"), ("reserve_hotel", "reserve_restaurant", "reserve_car_rental")),
+    # 注意 "reservation" 里并不包含子串 "reserve"（reserv-a-tion），
+    # 只写 reserve 会漏掉 "make a reservation" 这类最常见的说法。
+    (("reserv", "book", "预订", "预约"),
+     ("reserve_hotel", "reserve_restaurant", "reserve_car_rental")),
     (("invite", "邀请"), ("invite_user_to_slack",)),
     (("pay", "transfer", "refund", "付款", "转账", "退款"), ("send_money",)),
     (("scheduled", "recurring", "定期", "自动扣款"),
@@ -138,6 +141,7 @@ _SYSTEM = """你是智能体的任务解析器。你只读用户请求，推导�
    查询与办理用到的工具都要列进去。T 是"允许动用的工具"，不是"计划"；
    漏列会导致任务根本做不完，而多列不会让越权发生（O 与 P 仍然管着对象和来源）。
 2. objects 的类别必须是工具清单里标注的类别；用户没点名具体值就不要写；
+   （试过要求"点名值都写进去"：slack 全域 ASR 9.52%→11.43%、UA 0.40→0.39，净负，已回退）
 3. 只有当用户要求"按某个来源里的值来办"时，才写 delegation，source 用该来源的标签；
    **典型句式**："付这张账单"/"按账单付款"/"回复这封邮件"/"总结那篇文章"——
    这类请求里，动作所需的金额、收款人、收件人、正文只能从那个文件/邮件里得到，

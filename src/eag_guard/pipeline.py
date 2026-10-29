@@ -1,4 +1,4 @@
-"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
+﻿"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
 
 报告 §2.3：
     1. 任务解析：一次 LLM 调用只读用户请求，产出 T/O/P 与委托查找；
@@ -215,6 +215,10 @@ class Guard:
                     name: (
                         original
                         if f"{tool}.{name}" in strict
+                        # delegable=True 很关键：untargeted 的语义是"来源不预先
+                        # 限定"，对象参数也应随之交给裁判判定，而不是继续被
+                        # 白名单硬卡。实测 slack 里"邀请邮件提到的新同事 Dora"、
+                        # "读 Bob 的收件箱"都被判"不在 O"而误杀。
                         else _ParamRule(name, allow=ALL_PROVENANCE)
                     )
                     for name, original in rules.items()
