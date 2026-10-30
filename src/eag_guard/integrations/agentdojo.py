@@ -1,4 +1,4 @@
-﻿"""AgentDojo 适配层：把 EAG-Guard 插到 ToolsExecutor 之前。
+"""AgentDojo 适配层：把 EAG-Guard 插到 ToolsExecutor 之前。
 
 AgentDojo 的执行链是 `LLM → (assistant 消息带 tool_calls) → ToolsExecutor`。
 本模块提供一个 `EAGGuardElement`，它包装 `ToolsExecutor`：先对每个待执行的
@@ -253,16 +253,21 @@ class EAGGuardElement(BasePipelineElement):
             self._record_by_id[action.id] = record
             if all(d.allowed for d in record.decisions):
                 allowed.append(call)
-            if all(
-                item.attribution.provenance in (Provenance.USER_SPECIFIED, Provenance.USER_DELEGATED)
-                for item in record.attributions
-            ):
-                # 守卫自己认定"这次读取的每个参数都在授权内"——那么它读到的内容
-                # 就是用户委托来的内容。证据的授权状态必须跟着判定走，
-                # 而不是靠"参数值是否逐字出现在请求里"（那样会切断委托链：
-                # 读邮件 ✓ → 邮件里的网址 ✗ → 后续动作全被当成注入）。
-                self._sanctioned.add(str(getattr(call, "id", "")) )
+                if all(
+                    item.attribution.provenance
+                    in (Provenance.USER_SPECIFIED, Provenance.USER_DELEGATED)
+                    for item in record.attributions
+                ):
+                    # 守卫自己认定"这次读取的每个参数都在授权内"——那么它读到的内容
+                    # 就是用户委托来的内容。证据的授权状态必须跟着判定走，
+                    # 而不是靠"参数值是否逐字出现在请求里"（那样会切断委托链：
+                    # 读邮件 ✓ → 邮件里的网址 ✗ → 后续动作全被当成注入）。
+                    self._sanctioned.add(str(getattr(call, "id", "")))
             else:
+                # 只有**没放行**的调用才算被拒。
+                # 踩过的坑：放行判断与"参数是否都在授权内"写成了两个独立分支，
+                # 结果一个调用既被执行、又被记进 denied，模型收到"动作被拒绝"的
+                # 提示，于是回答"我没有权限查看日历"——而工具明明返回了数据。
                 denied.append((call, record))
                 for item in record.attributions:
                     if item.provenance is Provenance.INJECTED:

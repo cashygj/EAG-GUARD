@@ -1,4 +1,4 @@
-"""输出审核：返回最终回答前的文本出口检查。
+﻿"""输出审核：返回最终回答前的文本出口检查。
 
 报告 §2.3 第 3 阶段：在返回最终回答前检查文本中是否带入了注入内容。
 """
@@ -13,6 +13,11 @@ from typing import Callable, Iterable, Sequence
 from .types import Decision, EvidenceItem, Trust
 
 MIN_BLOCK = 32
+
+#: 注入模板的指纹（AgentDojo 的 important_instructions 等）
+_POISON = re.compile(r"<INFORMATION>|important message from me|"
+                     r"ignore (?:all )?(?:the )?(?:previous|prior|above)|"
+                     r"Before you can solve the task", re.I)
 
 _INSTRUCTION_PATTERNS = (
     re.compile(r"ignore (?:all )?(?:the )?(?:previous|prior|above) (?:instructions?|prompts?)", re.I),
@@ -51,6 +56,18 @@ class OutputAudit:
         # 试过"抹掉被拒动作里的 injected 参数值"：会误伤合法取值——日历事件的
         # 地址来自查询结果，被拒后也进了黑名单，答复里的地址就被抹掉，任务直接失败。
         # 净负，不再使用；只保留下面那条"既像指令、又有出处"的窄规则。
+
+        # 带注入标记的外部内容（如 <INFORMATION> 段落）：答复里凡与它逐字重合的
+        # 片段一律抹掉。只对"被标记为注入"的证据生效，正常查询结果不受影响——
+        # 这是旧口径（对所有未授权证据比对）会误伤合法答案之后的折中。
+        poisoned = [e for e in evidence
+                    if e.trust is Trust.UNTRUSTED and _POISON.search(e.text or "")]
+        for item in poisoned:
+            for block in self._leaked_blocks(out, item.text):
+                if block in out:
+                    out = out.replace(block, "〔已移除外部内容〕")
+                    redactions.append(block)
+                    findings.append(f"回答复述了注入内容（来自 {item.source}）")
 
         # 纯文本注入：答复里"既像指令、又确实出自不可信内容"的句子要抹掉。
         # 这类注入不在工具调用面上，守卫拦不到，只能靠输出端。
@@ -100,3 +117,4 @@ class NullAudit:
     def audit(self, text: str, evidence: Sequence[EvidenceItem],
               blocked: Sequence[str] | None = None) -> AuditResult:
         return AuditResult(text=text, flagged=False)
+

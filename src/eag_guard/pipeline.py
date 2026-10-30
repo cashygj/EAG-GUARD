@@ -1,4 +1,4 @@
-﻿"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
+"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
 
 报告 §2.3：
     1. 任务解析：一次 LLM 调用只读用户请求，产出 T/O/P 与委托查找；
@@ -165,6 +165,17 @@ class Trace:
 
 
 # --------------------------------------------------------------------------- 守卫
+
+
+def _is_blank(value: object) -> bool:
+    """空字符串、None、空列表/空字典都算"没填"。"""
+    if value is None:
+        return True
+    if isinstance(value, str):
+        return not value.strip() or value.strip() in {"[]", "{}", "None", "null"}
+    if isinstance(value, (list, tuple, set, dict)):
+        return len(value) == 0
+    return False
 
 
 def _as_values(value: object) -> tuple[object, ...]:
@@ -474,6 +485,10 @@ class Guard:
                 )
 
         for attr in attributions:
+            # 空值不参与溯源：模型把可选参数留空（cc=''、attachments=[]）
+            # 不是越权。实测这条把 travel 的 send_email 整条拒掉了。
+            if _is_blank(attr.value):
+                continue
             # 硬规则：只出现在不可信内容里、没有被委托的 URL 一律不读。
             # 这正是"外部内容可以改变计划，但不能改变授权"——按注入给的链接去
             # 访问，等于把请求发给攻击者指定的服务器。它不受 untargeted 放宽。

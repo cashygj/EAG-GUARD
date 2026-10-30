@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import json
 import sys
 import time
 from pathlib import Path
@@ -114,6 +115,8 @@ def main() -> int:
                         help="关掉输出审核（诊断用）")
     parser.add_argument("--structure-only", action="store_true",
                         help="纯结构白名单模式（消融: 报告表 4-2 的纯结构）")
+    parser.add_argument("--pairs-file", type=Path, default=None,
+                        help="只跑清单里的对（回归集），格式 {域: [{user_task, injection_task}]}")
     parser.add_argument("--no-delegation", action="store_true",
                         help="不承认委托边（消融: 纯结构）")
     parser.add_argument("--no-fpr", action="store_true", help="关掉字段级溯源（消融用）")
@@ -162,7 +165,16 @@ def main() -> int:
                 else parse_ids(args.user_tasks, "user_task"))
     injection_ids = (list(suite.injection_tasks) if args.injection_tasks == "all"
                      else parse_ids(args.injection_tasks, "injection_task"))
-    pairs = [(u, i) for u in user_ids for i in injection_ids]
+    if args.pairs_file is not None:
+        # 回归集：只跑清单里指定的对，省时省钱。
+        manifest = json.loads(args.pairs_file.read_text(encoding="utf-8"))
+        entries = manifest.get(args.suite) or []
+        if not entries:
+            print(f"[FAIL] {args.pairs_file} 里没有 {args.suite} 的对")
+            return 2
+        pairs = [(e["user_task"], e["injection_task"]) for e in entries]
+    else:
+        pairs = [(u, i) for u in user_ids for i in injection_ids]
     for user_id, injection_id in pairs:
         if user_id not in suite.user_tasks:
             print(f"[FAIL] 没有 {user_id}")
@@ -233,6 +245,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
 
 
 
