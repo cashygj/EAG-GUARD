@@ -1,4 +1,4 @@
-"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
+﻿"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
 
 报告 §2.3：
     1. 任务解析：一次 LLM 调用只读用户请求，产出 T/O/P 与委托查找；
@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Mapping, Protocol, Sequence
 
 from .audit import AuditResult, OutputAudit
@@ -522,6 +522,8 @@ class Guard:
             planner.reject(action, ("动作被拒绝",))
         else:
             planner.reject(action, record.reasons)
+
+
 
 
 

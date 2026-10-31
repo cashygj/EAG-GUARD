@@ -1,4 +1,4 @@
-"""汇总四域最新结果与报告差距（用指定运行目录）。"""
+﻿"""汇总四域最新结果与报告差距（用指定运行目录）。"""
 
 from pathlib import Path
 
@@ -8,10 +8,10 @@ RUNS = Path(r"D:\EAG-GUARD\results\runs")
 
 # 目前各域"最新且完整"的运行（注意：部分是今天修 bug 之前跑的）
 LATEST = {
-    "banking": "banking_v15_eag",
-    "workspace": "workspace_v6_eag",
-    "slack": "slack_full_eag",
-    "travel": "travel_rv_eag",
+    "banking": "final_banking",
+    "workspace": "final_workspace",
+    "slack": "final_slack",
+    "travel": "final_travel",
 }
 REPORT = {
     "banking": (0.0000, 0.7153),
@@ -51,3 +51,4 @@ print()
 print(f"按对合计  我们：ASR {tot_asr/tot_n*100:.2f}%  UA {tot_ua/tot_n:.4f}")
 print(f"按对合计  报告：ASR {rep_asr/tot_n*100:.2f}%  UA {rep_ua/tot_n:.4f}")
 print(f"UA 缺口：{(rep_ua-tot_ua)/tot_n:.4f}")
+
