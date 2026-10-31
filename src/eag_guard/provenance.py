@@ -25,6 +25,15 @@ _CURRENCY = str.maketrans({",": "", "$": "", "€": "", "¥": "", "￥": "",
                            "£": "", "_": "", "\u00a0": " "})
 
 
+def _url_forms(value: object) -> str:
+    """把 URL 归一成"去掉协议与 www 前缀"的形式，用于文本匹配。"""
+    text = str(value).strip()
+    for prefix in ("https://", "http://", "www."):
+        if text.lower().startswith(prefix):
+            text = text[len(prefix):]
+    return text.rstrip("/")
+
+
 def normalize(value: object) -> str:
     """归一化，容忍 $1,200 与 1200、全角半角、大小写、标点差异。"""
     text = str(value)
@@ -265,7 +274,11 @@ class Attributor:
             #    正文；若按整文匹配，正文里的账户就成了"用户委托的收款人"。
             #    字段型只认结构化字段（账单的 IBAN/Total），正文一律不算。
             field_mode = rule.allows_delegation and not rule.content_delegation
-            hits = [e for e in ctx.untrusted() if value_in(normalize(e.text), value)]
+            hits = [
+                e for e in ctx.untrusted()
+                if value_in(normalize(e.text), value)
+                or value_in(normalize(e.text), _url_forms(value))
+            ]
             if hits:
                 if not field_mode and any(e.authorized for e in hits):
                     node = ctx.delegation_nodes.get(f"{action.tool}.{param}") or ctx.user_node

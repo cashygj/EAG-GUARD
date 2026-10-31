@@ -355,7 +355,10 @@ class Guard:
                 attributions=reviewable,
                 origins={
                     a.param: tuple(dict.fromkeys(
-                        ev.source
+                        # 标明"这份材料是用户点名要读的"，裁判据此判断
+                        # "顺着它取值"属于任务本身，而不是看来源标签猜。
+                        f"{ev.producer or ev.source}"
+                        + ("（用户点名的材料）" if ev.authorized else "")
                         for ev in (by_id.get(i) for i in a.attribution.evidence_ids)
                         if ev is not None
                     ))
