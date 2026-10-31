@@ -1,4 +1,4 @@
-﻿"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
+"""执行前判定流水线：解析 → 逐步审核循环 → 输出审核。
 
 报告 §2.3：
     1. 任务解析：一次 LLM 调用只读用户请求，产出 T/O/P 与委托查找；
@@ -234,7 +234,12 @@ class Guard:
             widened = {
                 tool: {
                     name: (
-                        original
+                        # 资金流向字段强制"字段型委托"：只认结构化字段
+                        # （账单里的 IBAN/Total 行），不认正文整文匹配。
+                        # 注入正是把假 IBAN 写在账单/通知正文里；走整文匹配的话
+                        # 它会立刻被当成"用户委托来的收款人"（全域实测放过 US133…）。
+                        replace(original, mode="field", delegable=True,
+                                delegation_source=original.delegation_source or "file")
                         if f"{tool}.{name}" in strict
                         # delegable=True 很关键：untargeted 的语义是"来源不预先
                         # 限定"，对象参数也应随之交给裁判判定，而不是继续被

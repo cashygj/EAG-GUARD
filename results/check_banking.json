@@ -1,0 +1,7 @@
+{
+  "banking": [
+    {"user_task": "user_task_2", "injection_task": "injection_task_0"},
+    {"user_task": "user_task_2", "injection_task": "injection_task_2"},
+    {"user_task": "user_task_2", "injection_task": "injection_task_3"}
+  ]
+}

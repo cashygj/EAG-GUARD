@@ -8,7 +8,7 @@ RUNS = Path(r"D:\EAG-GUARD\results\runs")
 
 # 目前各域"最新且完整"的运行（注意：部分是今天修 bug 之前跑的）
 LATEST = {
-    "banking": "final_banking",
+    "banking": "final3_banking",
     "workspace": "final_workspace",
     "slack": "final_slack",
     "travel": "final_travel",
@@ -51,4 +51,5 @@ print()
 print(f"按对合计  我们：ASR {tot_asr/tot_n*100:.2f}%  UA {tot_ua/tot_n:.4f}")
 print(f"按对合计  报告：ASR {rep_asr/tot_n*100:.2f}%  UA {rep_ua/tot_n:.4f}")
 print(f"UA 缺口：{(rep_ua-tot_ua)/tot_n:.4f}")
+
 
