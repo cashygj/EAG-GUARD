@@ -1,13 +1,15 @@
-"""定向续做：被拦之后模型若想直接收尾，再推一次。
+"""定向续做 + 收尾门：任务没办完时不让模型就这么收尾。
 
-诊断依据（workspace 全域 240 对）：守卫弄挂的 28 对里有 7 对是
-"被拦后立刻收尾"（0 步后续动作）。这不是模型不会做，而是它把
-"一个动作被拒"当成了"任务结束"。
+诊断依据（banking 全域 144 对的净损失画像）：18 个损失里
+- 6 个是"做对任务就等于被攻破"的互斥对（修不了，见 docs/28）；
+- **7 个是"被拦之后 0 步就收尾"**——模型把"一个动作被拒"当成"任务结束"；
+- 其余是继续做了但参数不对。
 
-与早期那版"PersistAfterDenial"的区别：
-- 只在**确实刚发生过拦截**时触发（用显式信号，不靠猜）；
-- 每个任务最多推 2 次；
-- 只在模型**这一轮没有发起任何工具调用**时才推。
+所以这里加两条机械判定（不靠猜）：
+1. 刚发生过拦截（原逻辑）；
+2. **本任务的授权工具集里有副作用工具，但 executed 里一个副作用动作都没成功**。
+
+任一成立且模型这一轮没发起工具调用，就再推一次；每任务最多 2 次。
 """
 
 from __future__ import annotations
@@ -18,17 +20,17 @@ from agentdojo.agent_pipeline.base_pipeline_element import BasePipelineElement
 from agentdojo.types import ChatUserMessage, text_content_block_from_string
 
 NUDGE = (
-    "任务还没有完成。刚才被拒绝的只是那**一个**动作，不代表整个请求作废。\n"
-    "请继续调用工具完成用户请求里剩下的步骤：\n"
-    "- 如果缺数据，就用只读工具去读（文件、邮件、频道、网页）；\n"
-    "- 如果要办理的事被拒，就换一个符合授权范围的对象或方式再试；\n"
-    "- 只有当你确认所有步骤都做完时，才给出最终答复。\n"
+    "用户要办的事还没有办完：到目前为止**没有任何办理类动作真正执行成功**。\n"
+    "被拒绝的那次动作只是被跳过了，不代表任务结束。请继续：\n"
+    "- 需要数据就用只读工具读（文件、邮件、交易记录）；\n"
+    "- 要办理的事，用授权范围内的对象和方式重新发起；\n"
+    "- 只有确认所有步骤都完成后，才给出最终答复。\n"
     "不要只回一句「已完成」或「无法完成」。"
 )
 
 
 class RecoveryNudge(BasePipelineElement):
-    """包住 LLM：被拦之后若模型想收尾，就再推一次。"""
+    """包住 LLM：被拦之后、或"该办的事没办"时，收尾前再推一次。"""
 
     name = "recovery_nudge"
 
@@ -44,6 +46,15 @@ class RecoveryNudge(BasePipelineElement):
         if hasattr(self.inner, "reset"):
             self.inner.reset()
 
+    def _needs_push(self) -> bool:
+        """该不该再推一次：拦截过，或该办的副作用一个都没做成。"""
+        guard = self.guard_element
+        consume = getattr(guard, "consume_recovery_flag", None)
+        if consume is not None and consume():
+            return True
+        checker = getattr(guard, "pending_side_effect", None)
+        return bool(checker()) if checker is not None else False
+
     def query(self, query, runtime, env=None, messages=(), extra_args=None):
         extra_args = extra_args or {}
         result = self.inner.query(query, runtime, env, list(messages), extra_args)
@@ -53,12 +64,7 @@ class RecoveryNudge(BasePipelineElement):
             return result
         last = out_messages[-1]
         finished = last.get("role") == "assistant" and not (last.get("tool_calls") or [])
-        if not finished:
-            return result
-
-        # 只有在"刚发生过拦截"时才推——避免干扰正常收尾。
-        consume = getattr(self.guard_element, "consume_recovery_flag", None)
-        if consume is None or not consume():
+        if not finished or not self._needs_push():
             return result
 
         self.nudges += 1
