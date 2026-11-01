@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Any
 
 from agentdojo.agent_pipeline.base_pipeline_element import BasePipelineElement
+from agentdojo.functions_runtime import FunctionsRuntime
 from agentdojo.types import ChatUserMessage, text_content_block_from_string
 
 INSTRUCTION = """下面是一个任务的原始请求，以及你刚才给出的答复。
@@ -66,7 +67,8 @@ class AnswerReview(BasePipelineElement):
 
     def query(self, query, runtime, env=None, messages=(), extra_args=None):
         extra_args = extra_args or {}
-        if not messages or messages[-1].get("role") != "assistant":
+        if (not messages or messages[-1].get("role") != "assistant"
+                or messages[-1].get("tool_calls")):
             return query, runtime, env, messages, extra_args
 
         blocks = list(messages[-1].get("content") or [])
@@ -77,8 +79,12 @@ class AnswerReview(BasePipelineElement):
         prompt = INSTRUCTION.format(request=query, answer=answer[:3000],
                                     facts=self._facts())
         try:
+            # OpenAILLM reads messages, not the query argument. Keep the observed
+            # tool results available, and give this text-only pass no tools.
+            review_messages = [*messages, ChatUserMessage(role="user", content=[
+                text_content_block_from_string(prompt)])]
             _, _, _, out, _ = self.llm.query(
-                prompt, runtime, env, [], extra_args
+                query, FunctionsRuntime([]), env, review_messages, extra_args
             )
         except Exception:          # 复查失败不影响原答复
             return query, runtime, env, messages, extra_args
@@ -86,6 +92,8 @@ class AnswerReview(BasePipelineElement):
         reply = ""
         for message in reversed(out):
             if message.get("role") == "assistant":
+                if message.get("tool_calls"):
+                    return query, runtime, env, messages, extra_args
                 reply = "\n".join(
                     str(b.get("content") or "")
                     for b in (message.get("content") or [])

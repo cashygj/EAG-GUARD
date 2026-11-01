@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import json
 import sys
 import time
 from pathlib import Path
@@ -33,6 +32,7 @@ from eag_guard.bench.agentdojo_runner import (  # noqa: E402
     summarize_runs,
 )
 from eag_guard.llm import LLMError, client_from_env  # noqa: E402
+from eag_guard.bench.reproducibility import ensure_manifest  # noqa: E402
 
 
 def code_fingerprint() -> str:
@@ -47,7 +47,8 @@ def code_fingerprint() -> str:
 
 def run_clean(suite, pipeline, args, out_dir: Path) -> int:
     """不注入的干净基线：只回答"这个模型本来能做对多少"。"""
-    user_ids = parse_ids(args.user_tasks, "user_task")
+    user_ids = (list(suite.user_tasks) if args.user_tasks == "all"
+                else parse_ids(args.user_tasks, "user_task"))
     print(f"\n{args.suite} · {args.arm} · 干净基线 {len(user_ids)} 个用户任务 → {out_dir}")
 
     runs: list[PairRun] = []
@@ -58,6 +59,7 @@ def run_clean(suite, pipeline, args, out_dir: Path) -> int:
         try:
             utility, _ = suite.run_task_with_pipeline(pipeline, task, None, {})
             run.utility = bool(utility)
+            run.final_answer = pipeline.final_answer()
         except Exception as exc:
             run.error = f"{type(exc).__name__}: {exc}"
         run.executed = list(getattr(pipeline.executor, "executed", []))
@@ -123,6 +125,8 @@ def main() -> int:
     parser.add_argument("--feedback", default="strong", choices=["weak", "strong"],
                         help="拒绝后的反馈强弱（报告里弱反馈效用更高）")
     parser.add_argument("--model", default=None, help="默认取 EAG_MODEL / qwen-plus")
+    parser.add_argument("--attack-model-label", default=None,
+                        help="攻击模板里的模型称呼；两臂必须相同，默认使用 --model 的值")
     parser.add_argument("--no-cache", action="store_true",
                         help="不落盘缓存（默认缓存在 results/cache/agent）")
     parser.add_argument("--calls", type=int, default=15, help="循环上限轮数")
@@ -159,7 +163,7 @@ def main() -> int:
                                  enable_judge=args.judge != "none",
                                  enable_fpr=not args.no_fpr,
                              ))
-    attack = build_attack(args.attack, suite, pipeline)
+    attack = build_attack(args.attack, suite, pipeline, model_label=args.attack_model_label)
 
     user_ids = (list(suite.user_tasks) if args.user_tasks == "all"
                 else parse_ids(args.user_tasks, "user_task"))
@@ -189,6 +193,39 @@ def main() -> int:
         print(f"[FAIL] {out_dir} 已存在；加 --force 覆盖，或加 --resume 续跑")
         return 2
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Save before the first model call, so interruption does not erase the
+    # experiment identity. Legacy traces cannot silently join a new build.
+    import hashlib
+    import importlib.metadata
+    import agentdojo
+
+    benchmark_hash = hashlib.sha256()
+    benchmark_root = Path(agentdojo.__file__).parent
+    for path in sorted(benchmark_root.rglob("*")):
+        if path.is_file() and path.suffix in {".py", ".yaml", ".yml", ".json", ".txt"}:
+            benchmark_hash.update(path.relative_to(benchmark_root).as_posix().encode())
+            benchmark_hash.update(path.read_bytes())
+    manifest = {
+        "schema": 1, "code": code_fingerprint(),
+        "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "agentdojo_version": importlib.metadata.version("agentdojo"),
+        "benchmark_sha256": benchmark_hash.hexdigest(), "benchmark_version": "v1",
+        "model": model, "temperature": 0.0, "base_url": client.base_url,
+        "request_temperature_enforced": True,
+        "suite": args.suite, "arm": args.arm, "attack": args.attack,
+        "attack_model_label": args.attack_model_label or model,
+        "calls": args.calls, "judge": args.judge, "feedback": args.feedback,
+        "no_delegation": args.no_delegation, "structure_only": args.structure_only,
+        "no_audit": args.no_audit, "no_fpr": args.no_fpr,
+        "no_cache": args.no_cache, "no_injection": args.no_injection,
+        "pairs": [list(pair) for pair in pairs],
+    }
+    try:
+        ensure_manifest(out_dir, manifest, resume=args.resume)
+    except (ValueError, json.JSONDecodeError) as exc:
+        print(f"[FAIL] {exc}")
+        return 2
 
     if args.no_injection:
         return run_clean(suite, pipeline, args, out_dir)
@@ -222,12 +259,16 @@ def main() -> int:
     meta = {
         "code": code_fingerprint(),
         "model": model,
+        "scope_model": model,
+        "judge_model": model if args.judge == "llm" else None,
         "temperature": 0.0,
-        "api_model_field": "qwen-plus（滚动别名，无快照后缀）",
+        "request_temperature_enforced": True,
+        "api_model_field": model,
         "base_url": client.base_url,
         "suite": args.suite,
         "arm": args.arm,
         "attack": args.attack,
+        "attack_model_label": args.attack_model_label or model,
         "judge": args.judge,
         "feedback": args.feedback,
         "calls": args.calls,

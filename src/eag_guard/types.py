@@ -78,6 +78,8 @@ class EvidenceItem:
     authorized: bool = False
     #: 产生这条证据的工具名（如 get_channels），用于识别"清单类"读取。
     producer: str = ""
+    #: Exact resource requested by the tool (not a value supplied in its body).
+    resource: str | None = None
 
     def __str__(self) -> str:  # pragma: no cover
         return f"<{self.source} {self.trust.value}> {self.text[:60]}"

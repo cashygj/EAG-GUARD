@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import SimpleNamespace
@@ -181,6 +182,18 @@ class CachedChatClient:
         return {"hits": self.chat.completions.hits, "misses": self.chat.completions.misses}
 
 
+class ExplicitTemperatureClient:
+    """AgentDojo drops 0 via ``temperature or NOT_GIVEN``; restore it at dispatch."""
+
+    def __init__(self, client, temperature: float) -> None:
+        self.inner = client.chat.completions
+        self.temperature = temperature
+        self.chat = SimpleNamespace(completions=self)
+
+    def create(self, **kwargs):
+        return self.inner.create(**{**kwargs, "temperature": self.temperature})
+
+
 def make_llm(client, model: str | None = None, *, cache_dir: Path | None = None):
     """用 OpenAI 兼容端点构造 AgentDojo 的 LLM 元件（DashScope 兼容模式）。"""
     from openai import OpenAI
@@ -188,7 +201,8 @@ def make_llm(client, model: str | None = None, *, cache_dir: Path | None = None)
     from agentdojo.agent_pipeline.llms.openai_llm import OpenAILLM
 
     _patch_roles_for_dashscope()
-    sdk = OpenAI(api_key=client.api_key, base_url=client.base_url)
+    sdk = ExplicitTemperatureClient(
+        OpenAI(api_key=client.api_key, base_url=client.base_url), temperature=0.0)
     if cache_dir is not None:
         wrapper = CachedChatClient(sdk, cache_dir)
         llm = OpenAILLM(wrapper, model or client.model, temperature=0.0)
@@ -301,6 +315,7 @@ def domain_policy(suite) -> dict:
 
 def make_guard(suite, client, config: GuardConfig | None = None,
                *, judge: str = "llm", executor=None) -> EAGGuardElement:
+    explicit_config = config is not None
     config = config or GuardConfig()
     policy = domain_policy(suite)
     if policy.get("read_policy") or STRICT_PARAMS_BY_DOMAIN.get(getattr(suite, "name", "")):
@@ -325,7 +340,7 @@ def make_guard(suite, client, config: GuardConfig | None = None,
     )
     return EAGGuardElement(
         guard, executor=executor, domain=getattr(suite, "name", ""),
-        feedback=policy.get("feedback", config.feedback),
+        feedback=config.feedback if explicit_config else policy.get("feedback", config.feedback),
     )
 
 
@@ -399,6 +414,10 @@ def make_pipeline(suite, client, arm: str = "eag", *, calls: int = 15,
                   judge: str = "llm", config: GuardConfig | None = None,
                   model: str | None = None, cache_dir: Path | None = None) -> TaskPipeline:
     model = model or client.model
+    # The CLI model applies to planner, scope parser and judge. Do not leave
+    # parser/judge silently using the model inherited from .env.
+    client = copy(client)
+    client.model = model
     llm = make_llm(client, model, cache_dir=cache_dir)
     final = None
     base_executor = make_executor()
@@ -448,7 +467,7 @@ def make_pipeline(suite, client, arm: str = "eag", *, calls: int = 15,
         from .answer_review import AnswerReview
 
         inner = build_pipeline(llm_element, guarded, calls=calls,
-                               final_element=AnswerReview(llm_element),
+                               final_element=AnswerReview(llm, evidence=lambda: executor.evidence),
                                system_prompt=base_prompt)
         if final is not None:
             inner.elements.append(final)      # 输出审核放在复查之后

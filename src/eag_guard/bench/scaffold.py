@@ -65,6 +65,14 @@ class AntiRepeatExecutor(BasePipelineElement):
     def records(self):
         return getattr(self.inner, "records", [])
 
+    def consume_recovery_flag(self) -> bool:
+        consume = getattr(self.inner, "consume_recovery_flag", None)
+        return bool(consume()) if consume is not None else False
+
+    def pending_side_effect(self) -> bool:
+        checker = getattr(self.inner, "pending_side_effect", None)
+        return bool(checker()) if checker is not None else False
+
     def to_dict(self) -> dict:
         data = self.inner.to_dict() if hasattr(self.inner, "to_dict") else {}
         data["repeats_blocked"] = self.blocked

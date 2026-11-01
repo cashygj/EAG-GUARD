@@ -172,10 +172,22 @@ class AttributionContext:
         if source == "*":
             return list(self.evidence)
         wanted = [canonical_source(s) for s in source.split("|") if s.strip()]
+
+        def matches(item: EvidenceItem, requested: str) -> bool:
+            # A parser may delegate to the literal filename in the request.
+            # Resolve it against the tool's actual resource, never body text.
+            if item.resource is not None:
+                if requested == item.resource:
+                    return True
+                kind, separator, resource = requested.partition(":")
+                if separator and kind == item.source:
+                    return resource == item.resource
+            return (item.source == requested or item.source.startswith(requested + ":")
+                    or requested.startswith(item.source + ":"))
+
         return [
             e for e in self.evidence
-            if any(e.source == w or e.source.startswith(w + ":") or w.startswith(e.source + ":")
-                   for w in wanted)
+            if any(matches(e, w) for w in wanted)
         ]
 
 

@@ -525,6 +525,7 @@ class EAGGuardElement(BasePipelineElement):
                         fields=merged,
                         authorized=authorized,
                         producer=call.function,
+                        resource=(call.args or {}).get("file_path") if call.function == "read_file" else None,
                     ))
             else:
                 items.append(EvidenceItem(
@@ -535,6 +536,7 @@ class EAGGuardElement(BasePipelineElement):
                     fields=dict(self.field_extractor(call.function, call.args, text)),
                     authorized=authorized,
                     producer=call.function,
+                    resource=(call.args or {}).get("file_path") if call.function == "read_file" else None,
                 ))
             for item in items:
                 self.evidence.append(item)
