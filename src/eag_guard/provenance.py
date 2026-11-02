@@ -103,6 +103,29 @@ def url_variants(value: str) -> list[str]:
     return variants
 
 
+def _numeric_variants(raw: str) -> list[str]:
+    """数值的等价写法：10 → 10.0 / 10.00；10.0 → 10。"""
+    text = raw.strip().replace(",", "").lstrip("$€£¥")
+    try:
+        number = float(text)
+    except ValueError:
+        return []
+    out = [f"{number:.1f}", f"{number:.2f}", str(number)]
+    if number.is_integer():
+        out.append(str(int(number)))
+    return [v for v in dict.fromkeys(out) if v != raw]
+
+
+def _same_value(left: object, right: object) -> bool:
+    """结构化字段的等值判断：字符串相等，或数值等价（10 == 10.0）。"""
+    if normalize(left) == normalize(right):
+        return True
+    try:
+        return float(str(left).replace(",", "")) == float(str(right).replace(",", ""))
+    except (TypeError, ValueError):
+        return False
+
+
 def value_in(text: str, value: object) -> bool:
     """值是否出自这段文本：先直接比，再试日期/URL 等价写法，最后比长片段重叠。"""
     needle = normalize(value)
@@ -254,7 +277,7 @@ class Attributor:
                     hits = [
                         e for e in pool
                         if e.fields.get(param) is not None
-                        and normalize(e.fields[param]) == needle
+                        and _same_value(e.fields[param], value)
                     ]
                     # 兜底："来源本身不可被攻击者写入"就退化成整文匹配。
                     # **已删除**：banking 的注入会把账单的 Total/IBAN 两行整个替换掉，
