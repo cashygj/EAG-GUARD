@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920" version="1.1">
+<rect x="0" y="0" width="1600" height="920" fill="#FFFFFF"/>
+<g id="title">
+<text x="48.0" y="56.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="28" fill="#16283F" font-weight="bold">结构性变化：同一副骨架，判定被放进哪一层</text>
+<text x="48.0" y="88.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#4A5A6A" font-weight="normal">三条流水线用同样的五列骨架。空着的格子就是「这一层不存在」——变化不在于把某个格子做大，而在于补了哪些格子、换了判定单元。</text>
+<line x1="48.0" y1="106.0" x2="1552.0" y2="106.0" stroke="#D8E0E8" stroke-width="1.2" stroke-linecap="round"/>
+</g>
+<g id="grid">
+<text x="110.0" y="146.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="bold">用户请求</text>
+<text x="380.0" y="146.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="bold">输入处理</text>
+<text x="660.0" y="146.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="bold">主循环</text>
+<text x="960.0" y="146.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="bold">判定</text>
+<text x="1260.0" y="146.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="bold">工具 / 环境</text>
+</g>
+<g id="lane-bare">
+<text x="48.0" y="176.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#5B6B7C" font-weight="bold">无防御智能体</text>
+<rect x="110.0" y="190.0" width="200.0" height="74.0" rx="10" fill="#EAF0F8" stroke="#2F5597" stroke-width="1.7"/>
+<text x="124.0" y="215.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#2F5597" font-weight="bold">用户请求</text>
+<text x="124.0" y="235.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">唯一可信输入</text>
+<rect x="380.0" y="190.0" width="220.0" height="74.0" rx="10" fill="#FBFBFC" stroke="#C6CDD6" stroke-width="1.4" stroke-dasharray="6,5"/>
+<text x="392.0" y="210.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10.5" fill="#8A97A5" font-weight="normal">（无这一层）</text>
+<rect x="660.0" y="190.0" width="260.0" height="74.0" rx="10" fill="#F1F4F7" stroke="#5B6B7C" stroke-width="1.7"/>
+<text x="674.0" y="215.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#5B6B7C" font-weight="bold">模型</text>
+<text x="674.0" y="235.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">规划与执行同一上下文</text>
+<rect x="960.0" y="190.0" width="240.0" height="74.0" rx="10" fill="#FBFBFC" stroke="#C6CDD6" stroke-width="1.4" stroke-dasharray="6,5"/>
+<text x="972.0" y="210.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10.5" fill="#8A97A5" font-weight="normal">（无这一层）</text>
+<rect x="1260.0" y="190.0" width="200.0" height="74.0" rx="10" fill="#F1F4F7" stroke="#5B6B7C" stroke-width="1.7"/>
+<text x="1274.0" y="215.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#5B6B7C" font-weight="bold">工具 / 环境</text>
+<text x="1274.0" y="235.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">返回直接进上下文</text>
+<path d="M310.0,227.0 L651.8,227.0" fill="none" stroke="#2F5597" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5,4"/>
+<polygon points="660.0,227.0 650.0,231.4 650.0,222.6" fill="#2F5597"/>
+<path d="M920.0,227.0 L1251.8,227.0" fill="none" stroke="#5B6B7C" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5,4"/>
+<polygon points="1260.0,227.0 1250.0,231.4 1250.0,222.6" fill="#5B6B7C"/>
+<path d="M1360.0,264.0 L1360.0,294.0 L790.0,294.0 L790.0,272.2" fill="none" stroke="#5B6B7C" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5"/>
+<polygon points="790.0,264.0 794.4,274.0 785.6,274.0" fill="#5B6B7C"/>
+<text x="796.0" y="290.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10" fill="#71808F" font-weight="normal">工具返回</text>
+</g>
+<g id="lane-ipi">
+<text x="48.0" y="336.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#5B6B7C" font-weight="bold">IPIGuard：约束内嵌在计划里</text>
+<rect x="110.0" y="350.0" width="200.0" height="74.0" rx="10" fill="#EAF0F8" stroke="#2F5597" stroke-width="1.7"/>
+<text x="124.0" y="375.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#2F5597" font-weight="bold">用户请求</text>
+<text x="124.0" y="395.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">唯一可信输入</text>
+<rect x="380.0" y="350.0" width="220.0" height="74.0" rx="10" fill="#F1F4F7" stroke="#5B6B7C" stroke-width="1.7"/>
+<text x="394.0" y="375.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#5B6B7C" font-weight="bold">规划器</text>
+<text x="394.0" y="395.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">一次性建工具依赖图</text>
+<rect x="660.0" y="350.0" width="260.0" height="74.0" rx="10" fill="#F1F4F7" stroke="#5B6B7C" stroke-width="1.7"/>
+<text x="674.0" y="375.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#5B6B7C" font-weight="bold">执行器</text>
+<text x="674.0" y="395.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">按图遍历 + 只读扩展</text>
+<rect x="960.0" y="350.0" width="240.0" height="74.0" rx="10" fill="#F1F4F7" stroke="#5B6B7C" stroke-width="1.7"/>
+<text x="974.0" y="375.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#5B6B7C" font-weight="bold">工具准入</text>
+<text x="974.0" y="395.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">工具 ∈ 计划图？</text>
+<rect x="1260.0" y="350.0" width="200.0" height="74.0" rx="10" fill="#F1F4F7" stroke="#5B6B7C" stroke-width="1.7"/>
+<text x="1274.0" y="375.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#5B6B7C" font-weight="bold">工具 / 环境</text>
+<text x="1274.0" y="395.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">返回进上下文</text>
+<path d="M310.0,387.0 L371.8,387.0" fill="none" stroke="#5B6B7C" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="380.0,387.0 370.0,391.4 370.0,382.6" fill="#5B6B7C"/>
+<path d="M600.0,387.0 L651.8,387.0" fill="none" stroke="#5B6B7C" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="660.0,387.0 650.0,391.4 650.0,382.6" fill="#5B6B7C"/>
+<path d="M920.0,387.0 L951.8,387.0" fill="none" stroke="#5B6B7C" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="960.0,387.0 950.0,391.4 950.0,382.6" fill="#5B6B7C"/>
+<path d="M1200.0,387.0 L1251.8,387.0" fill="none" stroke="#5B6B7C" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="1260.0,387.0 1250.0,391.4 1250.0,382.6" fill="#5B6B7C"/>
+<path d="M1360.0,424.0 L1360.0,454.0 L790.0,454.0 L790.0,432.2" fill="none" stroke="#5B6B7C" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5"/>
+<polygon points="790.0,424.0 794.4,434.0 785.6,434.0" fill="#5B6B7C"/>
+<text x="796.0" y="450.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10" fill="#71808F" font-weight="normal">工具返回（不再判来源）</text>
+</g>
+<g id="lane-eag">
+<text x="48.0" y="496.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#0F766E" font-weight="bold">EAG-Guard：约束放进执行前的判定器</text>
+<rect x="110.0" y="510.0" width="200.0" height="74.0" rx="10" fill="#EAF0F8" stroke="#2F5597" stroke-width="1.7"/>
+<text x="124.0" y="535.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#2F5597" font-weight="bold">用户请求</text>
+<text x="124.0" y="555.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">唯一可信输入</text>
+<rect x="380.0" y="510.0" width="220.0" height="74.0" rx="10" fill="#E6F2F0" stroke="#0F766E" stroke-width="1.7"/>
+<text x="394.0" y="535.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#0F766E" font-weight="bold">解析器</text>
+<text x="394.0" y="555.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">只读请求 → 授权范围</text>
+<rect x="561.0" y="501.0" width="31.0" height="17.0" rx="8" fill="#A9761A" stroke="none" stroke-width="0"/>
+<text x="567.0" y="513.5" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="9.5" fill="#FFFFFF" font-weight="bold">新增</text>
+<rect x="660.0" y="510.0" width="260.0" height="74.0" rx="10" fill="#E6F2F0" stroke="#0F766E" stroke-width="1.7"/>
+<text x="674.0" y="535.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#0F766E" font-weight="bold">规划器 + 增量图</text>
+<text x="674.0" y="555.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">每轮追加节点与边</text>
+<rect x="881.0" y="501.0" width="31.0" height="17.0" rx="8" fill="#A9761A" stroke="none" stroke-width="0"/>
+<text x="887.0" y="513.5" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="9.5" fill="#FFFFFF" font-weight="bold">变了</text>
+<rect x="960.0" y="510.0" width="240.0" height="74.0" rx="10" fill="#E6F2F0" stroke="#0F766E" stroke-width="1.7"/>
+<text x="974.0" y="535.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#0F766E" font-weight="bold">判定器</text>
+<text x="974.0" y="555.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">工具/对象/每参数来源</text>
+<text x="974.0" y="572.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">＋ 独立裁判</text>
+<rect x="1161.0" y="501.0" width="31.0" height="17.0" rx="8" fill="#A9761A" stroke="none" stroke-width="0"/>
+<text x="1167.0" y="513.5" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="9.5" fill="#FFFFFF" font-weight="bold">新增</text>
+<rect x="1260.0" y="510.0" width="200.0" height="74.0" rx="10" fill="#E6F2F0" stroke="#0F766E" stroke-width="1.7"/>
+<text x="1274.0" y="535.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.2" fill="#0F766E" font-weight="bold">工具 / 环境</text>
+<text x="1274.0" y="555.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#243447" font-weight="normal">返回切片成新证据</text>
+<path d="M310.0,547.0 L371.8,547.0" fill="none" stroke="#0F766E" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="380.0,547.0 370.0,551.4 370.0,542.6" fill="#0F766E"/>
+<path d="M600.0,547.0 L651.8,547.0" fill="none" stroke="#0F766E" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="660.0,547.0 650.0,551.4 650.0,542.6" fill="#0F766E"/>
+<path d="M920.0,547.0 L951.8,547.0" fill="none" stroke="#0F766E" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="960.0,547.0 950.0,551.4 950.0,542.6" fill="#0F766E"/>
+<path d="M1200.0,547.0 L1251.8,547.0" fill="none" stroke="#0F766E" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="1260.0,547.0 1250.0,551.4 1250.0,542.6" fill="#0F766E"/>
+<path d="M1360.0,584.0 L1360.0,614.0 L790.0,614.0 L790.0,592.2" fill="none" stroke="#0F766E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5"/>
+<polygon points="790.0,584.0 794.4,594.0 785.6,594.0" fill="#0F766E"/>
+<text x="796.0" y="610.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10" fill="#0F766E" font-weight="normal">结果切片 → 新证据 → 下一轮</text>
+<path d="M1080.0,506.0 L1080.0,480.0 L790.0,480.0 L790.0,497.8" fill="none" stroke="#C0392B" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5"/>
+<polygon points="790.0,506.0 785.6,496.0 794.4,496.0" fill="#C0392B"/>
+<text x="880.0" y="474.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10" fill="#C0392B" font-weight="normal">拒绝：可操作原因 → 重规划</text>
+</g>
+<g id="deltas">
+<text x="48.0" y="636.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="14.5" fill="#16283F" font-weight="bold">结构性变化清单</text>
+<rect x="48.0" y="660.0" width="736.0" height="106.0" rx="12" fill="#FFFFFF" stroke="#DCE3EA" stroke-width="1.1"/>
+<circle cx="82" cy="694" r="16" fill="#0F766E"/>
+<text x="74.0" y="700.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">①</text>
+<text x="112.0" y="690.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#16283F" font-weight="bold">补了「解析器」这一层</text>
+<text x="112.0" y="716.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">无防御与 IPIGuard 都没有它：约束要么不存在，要么来自计划。</text>
+<text x="112.0" y="735.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">它只读用户请求，产出授权范围（工具 / 对象 / 参数来源）。</text>
+<rect x="816.0" y="660.0" width="736.0" height="106.0" rx="12" fill="#FFFFFF" stroke="#DCE3EA" stroke-width="1.1"/>
+<circle cx="850" cy="694" r="16" fill="#0F766E"/>
+<text x="842.0" y="700.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">②</text>
+<text x="880.0" y="690.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#16283F" font-weight="bold">换了「判定器」的判定单元</text>
+<text x="880.0" y="716.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">IPIGuard 判「工具名在不在计划图里」；</text>
+<text x="880.0" y="735.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">我们判整次调用：工具在 T 内、对象在 O 内、每个参数值的来源。</text>
+<text x="880.0" y="754.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">而且它是独立组件：判定器看不到规划器的推理。</text>
+<rect x="48.0" y="780.0" width="736.0" height="106.0" rx="12" fill="#FFFFFF" stroke="#DCE3EA" stroke-width="1.1"/>
+<circle cx="82" cy="814" r="16" fill="#0F766E"/>
+<text x="74.0" y="820.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">③</text>
+<text x="112.0" y="810.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#16283F" font-weight="bold">图的生长方式不同</text>
+<text x="112.0" y="836.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">IPIGuard：计划期建好，执行期只追加只读节点；</text>
+<text x="112.0" y="855.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">我们每轮追加证据、委托、参数、动作，判定只面对本轮增量。</text>
+<rect x="816.0" y="780.0" width="736.0" height="106.0" rx="12" fill="#FFFFFF" stroke="#DCE3EA" stroke-width="1.1"/>
+<circle cx="850" cy="814" r="16" fill="#0F766E"/>
+<text x="842.0" y="820.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">④</text>
+<text x="880.0" y="810.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#16283F" font-weight="bold">补了「输出审核」这一层</text>
+<text x="880.0" y="836.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">文本出口也进结构：最终回答里来自不可信内容的片段会被剪掉。</text>
+<text x="880.0" y="855.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#4A5A6A" font-weight="normal">IPIGuard 在论文里明确把纯文本操纵排除在外。</text>
+</g>
+<g id="note">
+<text x="48.0" y="906.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="normal">读法：每一行是一条流水线，五列是同一副骨架。虚线格＝这一层不存在；琥珀标签＝相对无防御新增或改变的部分。</text>
+</g>
+</svg>

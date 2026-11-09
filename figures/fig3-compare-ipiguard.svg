@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" version="1.1">
+<rect x="0" y="0" width="1600" height="940" fill="#FFFFFF"/>
+<g id="title">
+<text x="48.0" y="56.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="28" fill="#16283F" font-weight="bold">同一攻击、两种防线：管「工具」还是管「值」</text>
+<text x="48.0" y="88.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#4A5A6A" font-weight="normal">IPIGuard 约束「这次用的是哪个工具」；EAG-Guard 约束「这次调用里每个值从哪来」。同一个工具、同一个参数位被换掉时，前者看不见来源，后者能判定越权。</text>
+<line x1="48.0" y1="106.0" x2="1552.0" y2="106.0" stroke="#D8E0E8" stroke-width="1.2" stroke-linecap="round"/>
+</g>
+<g id="ipiguard">
+<rect x="48.0" y="128.0" width="732.0" height="470.0" rx="14" fill="#FFFFFF" stroke="#DCE3EA" stroke-width="1.2"/>
+<text x="72.0" y="162.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="16.5" fill="#5B6B7C" font-weight="bold">IPIGuard：判定停在「用哪个工具」</text>
+<text x="72.0" y="184.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="normal">计划期建工具依赖图；执行期只放行计划内工具与只读扩展</text>
+<rect x="72.0" y="196.0" width="684.0" height="86.0" rx="10" fill="#F8FAFC" stroke="#DCE3EA" stroke-width="1.1"/>
+<text x="86.0" y="214.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10.5" fill="#71808F" font-weight="normal">计划阶段：工具依赖图</text>
+<rect x="96.0" y="224.0" width="104.0" height="36.0" rx="8" fill="#FFFFFF" stroke="#5B6B7C" stroke-width="1.5"/>
+<text x="120.0" y="247.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#243447" font-weight="normal">读账单</text>
+<path d="M200.0,242.0 L297.8,242.0" fill="none" stroke="#5B6B7C" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon points="306.0,242.0 296.0,246.4 296.0,237.6" fill="#5B6B7C"/>
+<rect x="306.0" y="224.0" width="104.0" height="36.0" rx="8" fill="#FFFFFF" stroke="#5B6B7C" stroke-width="1.5"/>
+<text x="330.0" y="247.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#243447" font-weight="normal">转账</text>
+<text x="442.0" y="247.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#2E7D32" font-weight="bold">√ 转账在计划内</text>
+<text x="72.0" y="306.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#71808F" font-weight="normal">执行阶段：同一个动作</text>
+<rect x="100.0" y="314.0" width="96.5" height="44.0" rx="9" fill="#F2F4F7" stroke="#5B6B7C" stroke-width="1.6"/>
+<text x="117.0" y="342.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#243447" font-weight="normal">工具：转账</text>
+<rect x="93.0" y="307.0" width="110.5" height="58.0" rx="13" fill="none" stroke="#2E7D32" stroke-width="2.4"/>
+<rect x="218.5" y="314.0" width="109.0" height="44.0" rx="9" fill="#F2F4F7" stroke="#5B6B7C" stroke-width="1.6"/>
+<text x="235.5" y="342.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#243447" font-weight="normal">收款人：房东</text>
+<rect x="211.5" y="307.0" width="123.0" height="58.0" rx="13" fill="none" stroke="#C6CDD6" stroke-width="1.8" stroke-dasharray="5,4"/>
+<rect x="349.5" y="314.0" width="99.5" height="44.0" rx="9" fill="#F2F4F7" stroke="#5B6B7C" stroke-width="1.6"/>
+<text x="366.5" y="342.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#243447" font-weight="normal">金额：9999</text>
+<rect x="342.5" y="307.0" width="113.5" height="58.0" rx="13" fill="none" stroke="#C6CDD6" stroke-width="1.8" stroke-dasharray="5,4"/>
+<text x="109.1" y="380.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#2E7D32" font-weight="bold">√ 唯一判定对象</text>
+<text x="244.8" y="380.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#71808F" font-weight="normal">× 不判来源</text>
+<text x="371.1" y="380.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#71808F" font-weight="normal">× 不判来源</text>
+<rect x="72.0" y="400.0" width="684.0" height="62.0" rx="10" fill="#FBEBE8" stroke="#C0392B" stroke-width="1.3"/>
+<text x="88.0" y="424.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13.5" fill="#C0392B" font-weight="bold">动作放行 → 9999 被转走</text>
+<text x="88.0" y="446.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#4A5A6A" font-weight="normal">工具在计划内即可执行；参数由模型估算，估错也照常执行</text>
+<text x="72.0" y="490.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#71808F" font-weight="normal">工具重叠时用「伪造工具调用」把模型拉回原意图；</text>
+<text x="72.0" y="508.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#71808F" font-weight="normal">这是提示层的偏置，不是对参数值的判定。</text>
+<text x="72.0" y="534.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#4A5A6A" font-weight="bold">它没有「参数值来源」这一表示，</text>
+<text x="72.0" y="552.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#4A5A6A" font-weight="bold">所以同工具换参数只能靠降低概率。</text>
+</g>
+<g id="eag">
+<rect x="820.0" y="128.0" width="732.0" height="470.0" rx="14" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.4"/>
+<text x="844.0" y="162.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="16.5" fill="#0F766E" font-weight="bold">EAG-Guard：判定落到「每个值从哪来」</text>
+<text x="844.0" y="184.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="normal">授权范围只从用户请求推导；每个动作执行前逐个参数反向溯源</text>
+<rect x="844.0" y="196.0" width="684.0" height="86.0" rx="10" fill="#F4FAF9" stroke="#0F766E" stroke-width="1.1"/>
+<text x="858.0" y="214.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="10.5" fill="#71808F" font-weight="normal">任务解析：授权范围（只读用户请求）</text>
+<text x="858.0" y="236.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#243447" font-weight="normal">工具：转账　｜　对象：房东</text>
+<text x="858.0" y="258.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#243447" font-weight="normal">参数来源：金额只认账单的结构化字段</text>
+<text x="844.0" y="306.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#71808F" font-weight="normal">执行阶段：同一个动作</text>
+<rect x="872.0" y="314.0" width="96.5" height="44.0" rx="9" fill="#EAF0F8" stroke="#2F5597" stroke-width="1.6"/>
+<text x="889.0" y="342.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#243447" font-weight="normal">工具：转账</text>
+<rect x="865.0" y="307.0" width="110.5" height="58.0" rx="13" fill="none" stroke="#2E7D32" stroke-width="2.4"/>
+<rect x="990.5" y="314.0" width="109.0" height="44.0" rx="9" fill="#EAF0F8" stroke="#2F5597" stroke-width="1.6"/>
+<text x="1007.5" y="342.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#243447" font-weight="normal">收款人：房东</text>
+<rect x="983.5" y="307.0" width="123.0" height="58.0" rx="13" fill="none" stroke="#2E7D32" stroke-width="2.4"/>
+<rect x="1121.5" y="314.0" width="99.5" height="44.0" rx="9" fill="#FBEBE8" stroke="#C0392B" stroke-width="1.6"/>
+<text x="1138.5" y="342.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#243447" font-weight="normal">金额：9999</text>
+<rect x="1114.5" y="307.0" width="113.5" height="58.0" rx="13" fill="none" stroke="#C0392B" stroke-width="2.4"/>
+<text x="893.9" y="380.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#2E7D32" font-weight="bold">√ 在 T 内</text>
+<text x="1018.6" y="380.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#2E7D32" font-weight="bold">√ 在 O 内</text>
+<text x="1137.6" y="380.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11" fill="#C0392B" font-weight="bold">× 来源＝注入</text>
+<rect x="844.0" y="400.0" width="684.0" height="62.0" rx="10" fill="#EAF3EA" stroke="#2E7D32" stroke-width="1.3"/>
+<text x="860.0" y="424.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="13" fill="#2E7D32" font-weight="bold">动作拒绝 → 可操作原因 → 重规划为 98.70 → 放行</text>
+<text x="860.0" y="446.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#4A5A6A" font-weight="normal">金额只连到不可信证据，没有任何委托给它</text>
+<text x="844.0" y="490.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#4A5A6A" font-weight="bold">判定依据不是「在不在计划里」，</text>
+<text x="844.0" y="508.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#4A5A6A" font-weight="bold">而是「这个值通向哪个根」。</text>
+<text x="844.0" y="534.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#71808F" font-weight="normal">委托把「合法取外部值」与「注入扩权」分开：</text>
+<text x="844.0" y="552.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.3" fill="#71808F" font-weight="normal">字段型只认结构化字段，正文里的数不算。</text>
+</g>
+<g id="table">
+<text x="48.0" y="612.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12.5" fill="#0F766E" font-weight="bold">两边的分水岭：能不能回答「这个值凭什么被写进这次调用」。</text>
+<rect x="48.0" y="638.0" width="1504.0" height="42.0" rx="8" fill="#EEF2F7" stroke="#DCE3EA" stroke-width="1.0"/>
+<text x="64.0" y="665.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#16283F" font-weight="bold">对比项</text>
+<text x="336.0" y="665.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#16283F" font-weight="bold">IPIGuard（对比基线）</text>
+<text x="916.0" y="665.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="12" fill="#16283F" font-weight="bold">EAG-Guard（本工作）</text>
+<rect x="48.0" y="680.0" width="1504.0" height="46.0" rx="2" fill="#FAFBFC" stroke="#DCE3EA" stroke-width="0.8"/>
+<text x="64.0" y="709.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.8" fill="#16283F" font-weight="bold">判的是什么</text>
+<text x="336.0" y="709.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">工具在不在计划图里</text>
+<text x="916.0" y="709.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">每个参数值通向哪个根</text>
+<text x="64.0" y="755.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.8" fill="#16283F" font-weight="bold">同工具换参数</text>
+<text x="336.0" y="755.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">靠「伪造工具调用」降低误判概率（提示层偏置）</text>
+<text x="916.0" y="755.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">结构判定：注入值直接拒绝</text>
+<rect x="48.0" y="772.0" width="1504.0" height="46.0" rx="2" fill="#FAFBFC" stroke="#DCE3EA" stroke-width="0.8"/>
+<text x="64.0" y="801.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.8" fill="#16283F" font-weight="bold">合法地取外部值</text>
+<text x="336.0" y="801.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">只读工具扩展 + 提示引导</text>
+<text x="916.0" y="801.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">字段型委托：命中结构化字段才放行</text>
+<text x="64.0" y="847.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.8" fill="#16283F" font-weight="bold">纯文本注入</text>
+<text x="336.0" y="847.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">论文明确不覆盖</text>
+<text x="916.0" y="847.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.6" fill="#243447" font-weight="normal">输出审核（旅行域 20 对纯文本）</text>
+<line x1="320.0" y1="638.0" x2="320.0" y2="864.0" stroke="#DCE3EA" stroke-width="1.0" stroke-linecap="round"/>
+<line x1="900.0" y1="638.0" x2="900.0" y2="864.0" stroke="#DCE3EA" stroke-width="1.0" stroke-linecap="round"/>
+<line x1="48.0" y1="864.0" x2="1552.0" y2="864.0" stroke="#DCE3EA" stroke-width="1.2" stroke-linecap="round"/>
+</g>
+<g id="note">
+<text x="48.0" y="900.0" font-family="Microsoft YaHei, PingFang SC, Segoe UI, sans-serif" font-size="11.5" fill="#71808F" font-weight="normal">口径提示：两篇的绝对数字不可比（IPIGuard 主表用 GPT-4o-mini，本工作用 qwen-plus）；同模型 25 对聊天域切片 5/25 对 1/25，仅作方向性对照。</text>
+</g>
+</svg>

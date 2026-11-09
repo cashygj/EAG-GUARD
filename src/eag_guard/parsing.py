@@ -48,7 +48,11 @@ VERB_TOOLS: tuple[tuple[tuple[str, ...], tuple[str, ...]], ...] = (
      ("schedule_transaction", "update_scheduled_transaction")),
     # 注意：不能把 update_user_info / update_password 一起补进 T —— banking 的
     # 注入目标正是"改密码/改用户信息"，补进去等于给攻击开门（实测 ASR 4%→11%）。
-    (("update", "change", "modify", "修改", "调整"), ("update_scheduled_transaction",)),
+    # adjust/rent/payment 取自 banking 的真实措辞（"adjust my rent payment"）：
+    # 缺这几个词时 update_scheduled_transaction 进不了 T，合法改动被拒
+    # （三个守卫样本里该工具因"不在 T"被拒 12 次，是 banking 最大的误拦来源）。
+    (("update", "change", "modify", "adjust", "修改", "调整",
+      "rent", "payment", "房租", "付款"), ("update_scheduled_transaction",)),
     (("share", "分享"), ("share_file",)),
 )
 
