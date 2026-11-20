@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "backend": "native",
+  "rasterEngine": "libreoffice",
+  "source": "saved",
+  "inputPath": "D:\\EAG-GUARD\\reports\\AgentDojo-交互图.pptx",
+  "sourceSha256": "6213601ff50cce354f21d2d0d272ff5602a73ab69d9548d5459f0d330351eb82",
+  "dpi": 144,
+  "pageCount": 3,
+  "images": [
+    {
+      "index": 1,
+      "page": 3,
+      "path": "D:\\EAG-GUARD\\.dsh-office-83a8354affd1471494bca3279549dd3d\\r\\page-0001.png",
+      "width": 1920,
+      "height": 1081,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720.0666666666667
+      },
+      "byteLength": 227755
+    }
+  ],
+  "missingFonts": []
+}

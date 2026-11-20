@@ -433,6 +433,15 @@ def make_pipeline(suite, client, arm: str = "eag", *, calls: int = 15,
             final = OutputAuditElement(executor, OutputAudit())
     elif arm == "undefended":
         executor = RecordingExecutor(base_executor)
+    elif arm == "ipiguard":
+        # IPIGuard 基线：规划期生成工具依赖图（TDG），执行期只做**工具级**准入，
+        # 不检查参数来源——这正是它与 EAG-Guard 的关键差别。
+        from .ipiguard import IPIGuardElement, IPIGuardPlanner, tools_description
+
+        specs = toolspecs_from_suite(suite)
+        planner = IPIGuardPlanner(llm, tools_description(specs))
+        read_only = {s.name for s in specs.values() if getattr(s, "read_only", False)}
+        executor = IPIGuardElement(planner, base_executor, read_only=read_only)
     else:
         raise ValueError(f"未知的对照臂：{arm}")
     guarded = AntiRepeatExecutor(executor)
@@ -650,6 +659,7 @@ def to_outcomes(runs: Sequence[PairRun], suite) -> list[CaseOutcome]:
 
 def summarize_runs(runs: Sequence[PairRun], suite) -> Summary:
     return summarize(to_outcomes(runs, suite))
+
 
 
 

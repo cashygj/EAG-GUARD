@@ -109,7 +109,7 @@ def main() -> int:
                         choices=["workspace", "travel", "banking", "slack"])
     parser.add_argument("--user-tasks", default="0", help="如 0 或 0-4")
     parser.add_argument("--injection-tasks", default="0", help="如 0 或 1-5")
-    parser.add_argument("--arm", default="eag", choices=["eag", "undefended"])
+    parser.add_argument("--arm", default="eag", choices=["eag", "undefended", "ipiguard"])
     parser.add_argument("--attack", default="important_instructions")
     parser.add_argument("--judge", default="llm", choices=["llm", "rule", "none"],
                         help="none = 关掉语义裁判（消融用）")
@@ -286,6 +286,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
 

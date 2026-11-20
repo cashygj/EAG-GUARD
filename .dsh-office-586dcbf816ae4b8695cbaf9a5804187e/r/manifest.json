@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "backend": "native",
+  "rasterEngine": "libreoffice",
+  "source": "saved",
+  "inputPath": "D:\\EAG-GUARD\\reports\\EAG-Guard-时序图.pptx",
+  "sourceSha256": "195661ce2d8e27c0d58c5904cf1fe889a2f0202bf9fceb03a8a4d51ea07aa56b",
+  "dpi": 144,
+  "pageCount": 1,
+  "images": [
+    {
+      "index": 1,
+      "page": 1,
+      "path": "D:\\EAG-GUARD\\.dsh-office-586dcbf816ae4b8695cbaf9a5804187e\\r\\page-0001.png",
+      "width": 1920,
+      "height": 1081,
+      "rectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720.0666666666667
+      },
+      "byteLength": 159638
+    }
+  ],
+  "missingFonts": []
+}

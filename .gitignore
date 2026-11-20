@@ -1,4 +1,4 @@
-# 运行时与依赖（体积大、可重建）
+﻿# 运行时与依赖（体积大、可重建）
 .venv/
 .deps/
 .tmp/
@@ -37,3 +37,6 @@ results/runs/
 results/cache/
 _tmp/
 
+
+# Office 临时锁文件
+~$*
